@@ -114,10 +114,17 @@ class SFTDataset(Dataset):
         response = self.responses[item]
 
         # apply chat template
-        prompt_chat = [{'role': 'user', 'content': prompt}]
+        #prompt_chat = [{'role': 'user', 'content': prompt}]
 
         # string
-        prompt_chat_str = tokenizer.apply_chat_template(prompt_chat, add_generation_prompt=True, tokenize=False)
+        #prompt_chat_str = tokenizer.apply_chat_template(prompt_chat, add_generation_prompt=True, tokenize=False)
+        if hasattr(tokenizer, 'chat_template') and tokenizer.chat_template is not None:
+            # apply chat template
+            prompt_chat = [{'role': 'user', 'content': prompt}]
+            prompt_chat_str = tokenizer.apply_chat_template(prompt_chat, add_generation_prompt=True, tokenize=False)
+        else:
+            # For base models, just use the prompt directly
+            prompt_chat_str = prompt
         response_chat_str = response + tokenizer.eos_token
 
         # tokenize
