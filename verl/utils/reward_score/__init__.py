@@ -29,7 +29,7 @@ def _default_compute_score(data_source, solution_str, ground_truth, extra_info=N
 
         # from . import math_verify
         # res = math_verify.compute_score(solution_str, ground_truth)
-    elif data_source == 'fjxdaisy/finemath-4plus-processed':
+    elif data_source in ['fjxdaisy/finemath-4plus-processed', 'fjxdaisy/finemath-4plus-processed-v2', 'fjxdaisy/finemath-4plus-processed-v4']:
         from . import finemath
         res = finemath.compute_score(solution_str, ground_truth)
     elif data_source in [
