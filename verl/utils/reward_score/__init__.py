@@ -30,8 +30,16 @@ def _default_compute_score(data_source, solution_str, ground_truth, extra_info=N
         # from . import math_verify
         # res = math_verify.compute_score(solution_str, ground_truth)
     elif data_source in ['fjxdaisy/finemath-4plus-processed', 'fjxdaisy/finemath-4plus-processed-v2', 'fjxdaisy/finemath-4plus-processed-v4']:
-        from . import finemath
-        res = finemath.compute_score(solution_str, ground_truth)
+        # Check extra_info to determine which method to use
+        if extra_info and extra_info.get('use_nonembedding', False):
+            from . import finemath_nonembed
+            # Get the specific method from extra_info, default to 'jaccard' if not specified
+            method = extra_info.get('similarity_method', 'jaccard')
+            similarity = finemath_nonembed.TextSimilarity(method=method)
+            res = similarity.compute_score(solution_str, ground_truth)
+        else:
+            from . import finemath
+            res = finemath.compute_score(solution_str, ground_truth)
     elif data_source in [
             'numina_aops_forum', 'numina_synthetic_math', 'numina_amc_aime', 'numina_synthetic_amc', 'numina_cn_k12',
             'numina_olympiads'
@@ -44,6 +52,11 @@ def _default_compute_score(data_source, solution_str, ground_truth, extra_info=N
     elif data_source in ['hiyouga/geometry3k']:
         from . import geo3k
         res = geo3k.compute_score(solution_str, ground_truth)
+    elif data_source in ['finemath_nonembed']:
+        from . import finemath_nonembed
+        # Initialize with default jaccard method
+        similarity = finemath_nonembed.TextSimilarity()
+        res = similarity.compute_score(solution_str, ground_truth)
     else:
         raise NotImplementedError
 
